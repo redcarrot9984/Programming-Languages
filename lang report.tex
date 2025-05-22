@@ -1,0 +1,214 @@
+% ファイル先頭から\begin{document}までの内容（プレアンブル）については，
+% 基本的に { } の中を書き換えるだけでよい．
+\documentclass[autodetect-engine,dvi=dvipdfmx,ja=standard,
+    a4j,11pt]{bxjsarticle}
+
+%%======== プレアンブル ============================================%%
+% 用紙設定：指示があれば，適切な余白に設定しなおす
+\RequirePackage{geometry}
+\geometry{reset,paperwidth=210truemm,paperheight=297truemm}
+\geometry{hmargin=25truemm,top=20truemm,bottom=25truemm,footskip=10truemm,headheight=0mm}
+%\geometry{showframe} % 本文の"枠"を確認したければ，コメントアウト
+
+% 設定：図の挿入
+% http://www.edu.cs.okayama-u.ac.jp/info/tool_guide/tex.html#graphicx
+\usepackage{graphicx}
+
+% 設定：ソースコードの挿入
+% http://www.edu.cs.okayama-u.ac.jp/info/tool_guide/tex.html#fancyvrb
+\usepackage{fancyvrb}
+\renewcommand{\theFancyVerbLine}{\texttt{\footnotesize{\arabic{FancyVerbLine}:}}}
+
+% 設定：ソースコードをfloat扱いするための環境の定義
+%       図1, 図2, ... のように，Listing 1, Listing 2, ... とすることができる．
+\usepackage{newfloat}
+\DeclareFloatingEnvironment[name=Listing, fileext=lol]{eopcode}
+
+%%======== レポートタイトル等 ======================================%%
+% ToDo: 提出要領に従って，適切なタイトル・サブタイトルを設定する
+\title{プログラミング言語　レポート\\        % タイトル
+|\Large{smlを使用して問題を解く}|}   % サブタイトル
+
+% ToDo: 自分自身の氏名と学生番号に書き換える
+\author{氏名: 寺本 祥汰 (TERAMOTO, Shota) \\
+学生番号: 09B23597}
+
+% ToDo: レポート課題等の指示に従って適切に書き換える
+\date{出題日: 2025年04月10日 \\
+提出日: 2025年04月20日 \\
+締切日: 2025年04月24日 \\}  % 注：最後の\\は不要に見えるが必要．
+
+
+%%======== 本文 ====================================================%%
+\begin{document}
+    \maketitle
+% 目次つきの表紙ページにする場合はコメントを外す
+%{\footnotesize \tableofcontents \newpage}
+
+%% 本文は以下に書く．課題に応じて適切な章立てを構成すること．
+%% 章＝\section，節＝\subsection，項＝\subsubsection である．
+
+
+%--------------------------------------------------------------------%
+
+\section{問題} \label{sec:abstract}
+\subsection{扱う問題について}
+今回扱う問題は中国人輸送配達問題である．この問題は，グラフの最短経路を求める問題であり，全ての辺を少なくとも一度通り，同じ
+辺も必要なら通ることが出来る．また，計算の難しさは多項式時間で解ける問題である．
+\subsection{この問題を選んだ理由}
+この問題は，グラフ理論では実用的な問題であり，実際に使われている問題であり，また，関数型言語の特性も
+生かせる問題であるからだ．また，巡回セールスマン問題とは違いNP完全ではないため正解の解を出しやすく
+プログラムを組むことが可能であるためである．
+
+%--------------------------------------------------------------------%
+\section{プログラムとその解説} \label{sec:absatract}
+
+%--------------------------------------------------------------------%
+    \section{問3} \label{sec:absatract}
+\subsection{問題}
+実験により，得た正弦波，三角波，矩形波の3つの波形データから，次の式(1)で定義されるパワースペクトルの実験値$P(f_k)$を
+C言語プログラムで取得し，そのグラフを描きなさい．ただし$k=0...N/2-1$と限定し，横軸は周波数の常用対数
+$\log f_k$，縦軸はパワースペクトルの密度の常用対数$\log P(f_k)$とする．また，データ点だけでなく
+，ピーク位置を結ぶ線グラフも描きなさい．
+\subsection{解答}
+\subsubsection{3つの波形データ}
+実験で得られた波形は次のようなものである．
+
+これらのデータからパワースペクトルの値を求める．
+\subsubsection{パワースペクトルの計算}
+C言語を使用してパワースペクトルの計算を行う．プログラムは\ref{pow}節に記述してある．
+本プログラムは，まず，fopenを使用してcsvファイルから波形データを読み込む．
+そこからファイルの2列目の部分のデータを取り込む．
+次に，fftを使用してフーリエ変換を行い，パワースペクトルを計算する．その計算結果を，
+csvファイルに書き込む．このような操作を行うことで，パワースペクトルを計算することができる．
+\subsubsection{グラフの描画}
+グラフの描画はgnuplotを使用して行う．
+\subsubsection{グラフの結果}
+実行結果は以下のようになった．
+
+このように描画されている．正弦波と三角波はよく似ているが矩形波はかなり違った形のグラフとなった．
+%--------------------------------------------------------------------%
+    \section{問4} \label{sec:absatract}
+\subsection{問題}
+その他，実験の結果等について，考察を行いなさい．
+\subsection{解答}
+実験の結果の比較をすると全てのグラフで最も高い波が$\log 1000$であることから周波数はどれも1kHzであることがわかる．
+正弦波は，1つのピークがありそれが緩やかに減衰している．三角波は，ピークが一つあるがそれ以降正弦波よりも減衰幅が少なく
+緩い現象の仕方をしている．矩形波は，ピークが複数ありそれ以降は正弦波よりも減衰幅が少なく緩い現象の仕方をしている．
+その理由を考察していく．パワースペクトルのグラフは，フーリエ変換をしたグラフであり，正弦波はsin関数のグラフであるため
+少ない成分で表すことができるが，一方三角波，矩形波，はたくさんの成分で表さないといけないためピークが多くなる傾向があることがわかる
+また，矩形波は，急激な立ち上がり，多値下がりがあるため，波形に不連続店が生まれてしまうためである．このように
+パワースペクトルを見ることにより元のグラフに関する様々な情報を得ることができる．
+%--------------------------------------------------------------------%
+    \section{作成したプログラムのソースコード}
+以下に，課題3のために作成したプログラムを示す．
+
+%--------------------------------------------------------------------%
+    \subsection{パワースペクトルのソースコード} \label{pow}
+% Verbatim environment
+% プリアンブルで \usepackage{fancyvrb} が必要．
+%   - numbers           行番号を表示．left なら左に表示．
+%   - xleftmargin       枠の左の余白．行番号表示用に余白を与えたい．
+%   - numbersep         行番号と枠の間隙 (gap)．デフォルトは 12 pt．
+%   - fontsize          フォントサイズ指定
+%   - baselinestretch   行間の大きさを比率で指定．デフォルトは 1.0．
+    \begin{Verbatim}[numbers=left, xleftmargin=10mm, numbersep=6pt,
+        fontsize=\small, baselinestretch=0.8]
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <complex.h>
+#include "fftw3.h"
+
+#define N 7999
+
+// 入力データの構造体
+typedef struct {
+    double time;
+    double voltage;
+} DataPoint;
+
+int main() {
+    // 入力ファイルと出力ファイル
+    FILE *input = fopen("rectangle.csv", "r");
+    FILE *output = fopen("recoutput.csv", "w");
+    if (input == NULL || output == NULL) {
+        perror("error opening file");
+        return 1;
+    }
+
+    // データ配列
+    DataPoint data[N];
+    fftw_complex *in, *out;
+    fftw_plan plan;
+
+    // FFTW用メモリ確保
+    in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+
+    // 入力データの読み込み
+    int count = 0;
+    char line[256];
+    fgets(line, sizeof(line), input); // ヘッダ行をスキップ（必要に応じて）
+    while (fgets(line, sizeof(line), input) && count < N) {
+        sscanf(line, "%lf,%lf", &data[count].time, &data[count].voltage);
+        in[count] = data[count].voltage; // 実部に電圧、虚部は自動で0
+        count++;
+    }
+
+    fclose(input);
+
+    if (count != N) {
+        fprintf(stderr, "データ数が不足しています: %d\n", count);
+        fftw_free(in);
+        fftw_free(out);
+        fclose(output);
+        return 1;
+    }
+
+    // FFT計画の作成と実行
+    plan = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    // サンプリング周期とサンプリング周波数
+    double Ts = 1.0e-6; // サンプリング周期（秒）
+    double Fs = 1.0 / Ts; // サンプリング周波数（Hz）
+
+
+
+    // パワースペクトル密度を計算して出力
+    for (int k = 0; k < N / 2; k++) {
+        // 周波数
+        double freq = k * Fs / N;
+        if (freq == 0) continue; // log10(0)は未定義なのでスキップ
+
+        // パワースペクトル密度（正規化）
+        double magnitude = cabs(out[k]) / N;
+        double psd = 2.0 * magnitude * magnitude / Fs;
+
+        // 常用対数
+        double log_freq = log10(freq);
+        double log_psd = log10(psd);
+
+        // 出力
+        fprintf(output, "%f,%f\n", log_freq, log_psd);
+    }
+
+    // メモリ解放と計画の破棄
+    fftw_destroy_plan(plan);
+    fftw_free(in);
+    fftw_free(out);
+    fclose(output);
+
+    printf("処理が完了しました。output.csvに出力しました。\n");
+    return 0;
+}
+
+
+    \end{Verbatim}
+
+%--------------------------------------------------------------------%
+
+%--------------------------------------------------------------------%
+%% 本文はここより上に書く（\begin{document}～\end{document}が本文である）
+\end{document}
