@@ -27,7 +27,7 @@
 %%======== レポートタイトル等 ======================================%%
 % ToDo: 提出要領に従って，適切なタイトル・サブタイトルを設定する
 \title{プログラミング言語　レポート\\        % タイトル
-|\Large{smlを使用して問題を解く}|}   % サブタイトル
+|\Large{中国人郵便配達問題を解くSMLの作成}|}   % サブタイトル
 
 % ToDo: 自分自身の氏名と学生番号に書き換える
 \author{氏名: 寺本 祥汰 (TERAMOTO, Shota) \\
@@ -53,7 +53,7 @@
 
 \section{問題} \label{sec:abstract}
 \subsection{扱う問題について}
-今回扱う問題は中国人輸送配達問題である．この問題は，グラフの最短経路を求める問題であり，全ての辺を少なくとも一度通り，同じ
+今回扱う問題は中国人郵便配達問題である．この問題は，オイラー閉路のグラフの最短経路を求める問題であり，全ての辺を少なくとも一度通り，同じ
 辺も必要なら通ることが出来る．また，計算の難しさは多項式時間で解ける問題である．
 \subsection{この問題を選んだ理由}
 この問題は，グラフ理論では実用的な問題であり，実際に使われている問題であり，また，関数型言語の特性も
@@ -61,7 +61,63 @@
 プログラムを組むことが可能であるためである．
 
 %--------------------------------------------------------------------%
-\section{プログラムとその解説} \label{sec:absatract}
+\section{関数とその解説} \label{sec:absatract}
+すべてのコードは??節に記載している．この章では今回使用したすべての関数の説明を行い，同時に
+中国人郵便配達問題を解くためのアルゴリズムを説明する．
+\subsection{関数の説明}
+\subsubsection{基本の型定義}
+型の定義とサンプルデータを以下のようにした．
+\begin{Verbatim}[numbers=left, xleftmargin=10mm, numbersep=6pt,
+fontsize=\small, baselinestretch=0.8]
+type vertex = string
+type edge = vertex * vertex * int
+type graph = edge list
+
+val sampleGraph : graph = [
+ ("A", "B", 2),
+ ("A", "C", 3),
+ ("B", "C", 1),
+ ("C", "D", 4),
+ ("D", "A", 5)
+]
+\end{Verbatim}
+これはまず，vertexという文字列を定義して，edgeという始点，終点，重みを持つ辺を定義づけそれを
+グラフという辺のリストとして定義したものである．そのため，今回はこの5つの辺を持つグラフを
+定義した．
+\subsubsection{各頂点の次数を求める関数}
+次に，次数を求める関数を定義する．これは，次数が奇数である頂点を求めるために必要な関数である．
+これを以下のように作成した．
+\begin{Verbatim}[numbers=left, xleftmargin=10mm, numbersep=6pt,
+fontsize=\small, baselinestretch=0.8]
+
+(* 頂点の次数を数える関数 *)
+fun count_degrees (edges : graph) : (vertex * int) list =
+ let
+
+(* 辺を走査して、各頂点の出現回数を数える局所関数 *)
+ 
+fun add_vertex (v, []) = [(v, 1)]
+ | add_vertex (v, (x, n)::rest) =
+ if x = v then
+ (x, n+1) :: rest
+ else
+ (x, n) :: add_vertex (v, rest)
+
+ fun process_edge ((u, v, _), counts) =
+                    add_vertex (v, add_vertex (u, counts))
+
+ (* 各辺の両端の頂点を処理 *)
+ fun process_edge ((u, v, _), counts) =
+ add_vertex (v, add_vertex (u, counts))
+ in
+ foldl process_edge [] edges
+ end
+\end{Verbatim}
+この関数は，edgeとgraphをうけとり，（頂点，次数）の形のリストで返す関数となっている．
+動作の仕組みとして，2つの局所関数を用いて実行している．
+最初に\verb{add\_vertex}という局所関数を定義している．この関数では再帰処理が行われており，
+まず，頂点vが空のリストであれば，その頂点vを1回出現したものとしてリストに追加する．
+次に，そうでない場合は，
 
 %--------------------------------------------------------------------%
     \section{問3} \label{sec:absatract}
